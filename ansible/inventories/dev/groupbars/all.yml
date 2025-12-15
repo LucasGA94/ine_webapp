@@ -1,0 +1,8 @@
+env_name: development
+app_port: 8000
+# Define qué archivos de compose usar en Dev
+docker_compose_flags: "-f docker-compose.yml -f docker-compose.dev.yml"
+# Variables para el archivo .env
+db_user: postgres
+db_password: postgres
+flask_secret: dev_secret_key

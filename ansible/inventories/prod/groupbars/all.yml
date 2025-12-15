@@ -1,0 +1,8 @@
+env_name: production
+app_port: 8000
+# Define qué archivos de compose usar en Prod (Usa Gunicorn)
+docker_compose_flags: "-f docker-compose.yml -f docker-compose.prod.yml"
+# Variables seguras (en un caso real, usarías Ansible Vault para esto)
+db_user: postgres
+db_password: super_secure_password_prod
+flask_secret: prod_secret_key_very_long

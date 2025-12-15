@@ -1,0 +1,7 @@
+---
+- name: Actualizar aplicación solamente
+  hosts: webservers
+  become: yes
+  
+  roles:
+    - webapp

@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.pytest_cache/
+
+# Dependencias y Logs
+*.log
+logs/
+
+# Entorno
+.env
+.flaskenv
+
+# Docker/Infraestructura
+dbdata/
+*.iml
+.DS_Store

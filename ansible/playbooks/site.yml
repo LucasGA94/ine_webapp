@@ -1,0 +1,8 @@
+---
+- name: Provisionar y Desplegar INE Dashboard
+  hosts: webservers
+  become: yes # Ejecutar como sudo por defecto donde sea necesario
+  
+  roles:
+    - common  # Primero instala Docker
+    - webapp  # Luego despliega la app

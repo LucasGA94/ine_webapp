@@ -1,0 +1,37 @@
+---
+- name: Actualizar caché de apt
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+
+- name: Instalar dependencias básicas
+  apt:
+    name:
+      - git
+      - curl
+      - python3-pip
+    state: present
+  become: yes
+
+- name: Instalar Docker.io y Docker Compose
+  apt:
+    name: 
+      - docker.io
+      - docker-compose-v2
+    state: present
+  become: yes
+
+- name: Asegurar que el servicio Docker está corriendo
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Añadir usuario actual al grupo docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+  become: yes

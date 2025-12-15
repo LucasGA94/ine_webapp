@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}IPC - INE Dashboard{% endblock %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Índice de Precios de Consumo (General)</h2>
+        <span style="font-size: 0.9rem; color: var(--text-color-light);">Últimos 12 meses</span>
+    </div>
+
+    {% if error %}
+        <div class="error-msg">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    {% if data %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Año</th>
+                        <th>Periodo</th>
+                        <th class="numeric">Índice (Valor)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td>{{ item.Anyo }}</td>
+                        <td>{{ item.Periodo }}</td>
+                        <td class="numeric"><strong>{{ item.Valor }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="card" style="margin-top: 20px; font-size: 0.9rem;">
+            <p><strong>Nota técnica:</strong> Estos datos corresponden al Índice General Nacional (Base 2021). 
+            Los datos se obtienen en tiempo real a través de la API <code>wstempus</code> del INE.</p>
+        </div>
+
+    {% else %}
+        {% if not error %}
+            <div class="card">
+                <p>No hay datos disponibles para mostrar en este momento.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

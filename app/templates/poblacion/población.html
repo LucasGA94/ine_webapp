@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Población - INE Dashboard{% endblock %}
+
+{% block content %}
+    <h2>Población Residente</h2>
+
+    {% if error %}
+        <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    {% if series %}
+        {% for serie in series %}
+            <div class="card" style="margin-bottom: 30px;">
+                <h3 style="font-size: 1.1rem; margin-top: 0;">{{ serie.nombre }}</h3>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th class="numeric">Personas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dato in serie.datos %}
+                            <tr>
+                                <td>
+                                    {{ dato.Anyo }} 
+                                    {% if dato.Periodo %} - {{ dato.Periodo }}{% endif %}
+                                </td>
+                                <td class="numeric">{{ "{:,.0f}".format(dato.Valor).replace(',', '.') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        {% if not error %}
+            <p>Cargando datos demográficos...</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}

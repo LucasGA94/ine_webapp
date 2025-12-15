@@ -1,0 +1,43 @@
+---
+- name: Crear directorio de la aplicación
+  file:
+    path: /opt/ine-dashboard
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_user }}"
+  become: yes
+
+- name: Copiar archivos del proyecto al servidor
+  copy:
+    # Copia todo desde la raíz de tu proyecto local (../)
+    # Excluyendo lo que esté en .gitignore si usas 'synchronize', pero con 'copy':
+    src: ../../
+    dest: /opt/ine-dashboard/
+    # Excluir carpetas pesadas o innecesarias
+    exclude:
+      - .git
+      - .env
+      - __pycache__
+      - ansible
+      - venv
+  # Nota: Para proyectos grandes, se recomienda usar el módulo 'synchronize' o 'git'
+
+- name: Generar archivo .env en el servidor
+  copy:
+    dest: /opt/ine-dashboard/.env
+    content: |
+      FLASK_CONFIG={{ env_name }}
+      APP_PORT={{ app_port }}
+      FLASK_SECRET_KEY={{ flask_secret }}
+      DB_HOST=db
+      DB_NAME=ine_cache
+      DB_USER={{ db_user }}
+      DB_PASSWORD={{ db_password }}
+      DB_PORT=5432
+
+- name: Desplegar con Docker Compose
+  shell: |
+    docker compose {{ docker_compose_flags }} up -d --build
+  args:
+    chdir: /opt/ine-dashboard
+  # Esto asegura que si cambia la config, se reconstruya

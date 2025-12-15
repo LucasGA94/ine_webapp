@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  web:
+    # Construye a partir del Dockerfile en el directorio actual
+    build: .
+    image: ine-dashboard:latest
+    container_name: ine_web_base
+    restart: unless-stopped
+    # Carga variables de entorno (DB credentials)
+    env_file:
+      - .env
+    # Depende de la base de datos (Docker se asegura que la DB se inicie primero)
+    depends_on:
+      - db
+    
+  db:
+    image: postgres:15-alpine
+    container_name: ine_db
+    restart: unless-stopped
+    # Usa las variables de .env para configurar la DB
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      # Persistencia de los datos de la base de datos
+      - db_data:/var/lib/postgresql/data/
+
+volumes:
+  db_data:

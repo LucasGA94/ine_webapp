@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}INE Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <h1><a href="{{ url_for('ipc.index') }}">🇪🇸 INE Data</a></h1>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="{{ url_for('ipc.index') }}" 
+                           class="{% if request.blueprint == 'ipc' %}active{% endif %}">
+                           Inflación (IPC)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('poblacion.index') }}" 
+                           class="{% if request.blueprint == 'poblacion' %}active{% endif %}">
+                           Población
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <button id="theme-toggle" class="theme-toggle-btn" title="Cambiar tema">🌗</button>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p>Datos públicos proporcionados por el Instituto Nacional de Estadística (INE).</p>
+        <p>Proyecto Open Source v1.0</p>
+    </footer>
+</body>
+</html>
