@@ -1,9 +1,10 @@
 import os
-import sys
-# Necesario para que Python encuentre los módulos dentro de la carpeta 'app'
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'app')))
+# No es necesario importar sys ni manipular el path si el WORKDIR es /app
+# import sys 
 
 # La función create_app() se define en app/__init__.py
+# Esta importación asume que 'app' está en el PYTHONPATH, 
+# lo cual Docker garantiza con WORKDIR /app.
 from app import create_app
 
 # Determina el modo de configuración (development, production)
@@ -14,6 +15,6 @@ app = create_app(config_mode)
 
 if __name__ == "__main__":
     # Bloque de ejecución para desarrollo local directo (python run.py)
-    # En Docker Compose, este comando será sobrescrito en modo prod.
     port = int(os.getenv("APP_PORT", 8000))
+    # app.config.get('DEBUG', True) debería estar en app/__init__.py
     app.run(host="0.0.0.0", port=port, debug=app.config.get('DEBUG', True))
