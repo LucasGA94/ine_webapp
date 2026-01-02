@@ -1,25 +1,36 @@
-version: '3.8'
-
 services:
   web:
-    container_name: ine_web_dev
-    # Sobrescribir el comando para usar el servidor de desarrollo de Flask
-    # Usamos python run.py ya que el run.py llama a app.run(debug=True)
-    command: python run.py
-    
-    # Montar el código fuente para hot-reload
-    volumes:
-      - ./app:/app/app       # Montar la carpeta de la aplicación
-      - ./run.py:/app/run.py # Montar el run.py
-      - ./logs:/app/logs     # Carpeta para logs
-      
-    ports:
-      # Mapeo de puertos para acceder desde el host
-      - "${APP_PORT:-8000}:${APP_PORT:-8000}"
-      
-    # Configuración de desarrollo
-    environment:
-      FLASK_CONFIG: development
-      # Carga las variables de .env (aunque ya están en el base, es buena práctica)
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ine-dashboard:latest
+    container_name: ine_web_base
+    restart: unless-stopped
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy  # Esto espera a que DB esté lista
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:15-alpine
+    container_name: ine_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

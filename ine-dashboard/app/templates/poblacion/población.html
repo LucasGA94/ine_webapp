@@ -1,45 +1,34 @@
-{% extends "base.html" %}
-
-{% block title %}Población - INE Dashboard{% endblock %}
-
-{% block content %}
-    <h2>Población Residente</h2>
-
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Población España</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Población Residente en España</h1>
     {% if error %}
-        <div class="error-msg">{{ error }}</div>
-    {% endif %}
-
-    {% if series %}
-        {% for serie in series %}
-            <div class="card" style="margin-bottom: 30px;">
-                <h3 style="font-size: 1.1rem; margin-top: 0;">{{ serie.nombre }}</h3>
-                
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th class="numeric">Personas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for dato in serie.datos %}
-                            <tr>
-                                <td>
-                                    {{ dato.Anyo }} 
-                                    {% if dato.Periodo %} - {{ dato.Periodo }}{% endif %}
-                                </td>
-                                <td class="numeric">{{ "{:,.0f}".format(dato.Valor).replace(',', '.') }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        {% endfor %}
+        <p style="color:red;">{{ error }}</p>
     {% else %}
-        {% if not error %}
-            <p>Cargando datos demográficos...</p>
-        {% endif %}
+        <table>
+            <tr>
+                <th>Fecha</th>
+                <th>Población</th>
+            </tr>
+            {% for item in series %}  <!-- Ajusta según la estructura de datos en routes.py -->
+                <tr>
+                    <td>{{ item.NombrePeriodo or item.Fecha }}</td>
+                    <td>{{ item.Valor }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <pre>{{ series | tojson(indent=2) }}</pre>  <!-- Muestra datos crudos para depurar -->
     {% endif %}
-{% endblock %}
+    <p><a href="/">Volver al índice</a></p>
+</body>
+</html>

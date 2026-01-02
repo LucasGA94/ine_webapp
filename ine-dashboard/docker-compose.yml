@@ -1,53 +1,31 @@
-version: '3.8'
-
 services:
   web:
-    # Configuración de la imagen/construcción
     build:
-      # Contexto de construcción: Subimos al directorio padre (la raíz del proyecto)
-      # Esto permite acceder a la carpeta 'app/' y 'run.py'.
-      context: .. 
-      
-      # Indicamos que el Dockerfile se encuentra DENTRO del subdirectorio 'ine-dashboard/'
-      dockerfile: ine-dashboard/Dockerfile 
-      
+      context: .
+      dockerfile: Dockerfile
     image: ine-dashboard:latest
     container_name: ine_web_base
-    
-    # Configuración de reinicio y entorno
     restart: unless-stopped
     env_file:
       - .env
-    # Dependencia que espera a que la DB esté "sana"
     depends_on:
       db:
-        condition: service_healthy 
-    
-    # Exposición de Puertos y Volúmenes
+        condition: service_healthy  # Esto espera a que DB esté lista
     ports:
-      # Mapea el puerto interno 8000 (Gunicorn/Flask) al puerto 8000 del host
-      - "8000:8000" 
-      
-    # Mapea el código fuente local (directorio padre) al WORKDIR /app del contenedor
+      - "8000:8000"
     volumes:
-      - ..:/app 
+      - .:/app
 
   db:
     image: postgres:15-alpine
     container_name: ine_db
     restart: unless-stopped
-    
-    # Variables de entorno para configurar la DB
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      
     volumes:
-      # Persistencia de los datos de la base de datos
       - db_data:/var/lib/postgresql/data/
-
-    # Healthcheck: Comprueba que la DB está lista para aceptar conexiones
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
       interval: 5s
